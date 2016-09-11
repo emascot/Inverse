@@ -1,58 +1,38 @@
 # Inverse
 
-Square matrix inverse written in Fortran
+Invert a double complex square matrix in Fortran
 
 4x4 inverse adapted from [gluInvertMatrix](http://www.mesa3d.org/)
 
-|Method    |Description         |
-|----------|--------------------|
-|inverse|Inverts a square matrix|
-|inverse2x2|Inverts a 2x2 matrix|
-|inverse4x4|Inverts a 4x4 matrix|
+|Methods          |Description                      |
+|-----------------|---------------------------------|
+|invert           |Main driver                      |
+|invert2x2        |Invert 2x2                       |
+|invert3x3        |Invert 3x3                       |
+|invert4x4        |Invert 4x4                       |
+|invert_symmetric |Invert symmetric                 |
+|invert_hermitian |Invert hermitian                 |
+|invert_positive  |Invert positive definite         |
+|invert_general   |Invert general matrix            |
+|is_symmetric     |Return true if symmetric         |
+|is_hermitian     |Return true if hermitian         |
+|is_positive      |Return true if positive definite |
 
 ##### Usage
 
-inverse(N,M)
-* N - Dimension of matrix
-* M - Matrix to invert
-
-##### Example
-
-    program main
-      implicit none
-      integer, parameter :: dp=kind(0.d0)
-      complex(dp), dimension(2,2) :: a
-      complex(dp), dimension(4,4) :: b
-      complex(dp), parameter :: ci = dcmplx(0.d0,1.d0)
-
-      interface inverse
-        subroutine inverse(n,m)
-          integer, intent(in) :: n
-          complex(kind=8), intent(inout) :: m(n,n)
-        end subroutine inverse
-      end interface
-
-      a = transpose(reshape((/ complex(dp) :: &
-         1, 2, &
-         3, 4 /), shape(a)))
-
-      b = transpose(reshape((/ complex(dp) :: &
-        ci, 0, 0, 0, &
-         0,-1, 0, 0, &
-         0, 0, 1, 0, &
-         0, 0, 0,-1 /), shape(b)))
-
-      print *, "a="
-      print *, a(1,1), a(1,2)
-      print *, a(2,1), a(2,2)
-      call inverse(2,a)
-      print *, "a^-1="
-      print *, a(1,1), a(1,2)
-      print *, a(2,1), a(2,2)
-
-      print *, "b="
-      print *, b
-      call inverse(4,b)
-      print *, "b^-1="
-      print *, b
-    end program main
+```fortran
+use inverse
+...
+call invert(n, m, mattype, ierr) ! mattype and ierr are optional
+if (is_symmetric(m)) print *, "m is symmetric"
+```
+|Parameter|Description                        |
+|---------|-----------------------------------|
+|N        |Dimension of matrix                |
+|M        |Matrix to invert                   |
+|mattype  |(Optional) Matrix type             |
+|         |- 's': symmetric indefinite        |
+|         |- 'h': hermitian indefinite        |
+|         |- 'p': hermitian positive definite |
+|ierr     |(Optional) Status                  |
+|         |- 0: successful exit               |

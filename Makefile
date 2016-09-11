@@ -2,8 +2,14 @@ FC = gfortran
 FFLAGS = -O3 -g
 LAPACK = -llapack
 
-example : example.f90 inverse.o
-	$(FC) $(FFLAGS) $(LAPACK) -o example.x example.f90 inverse.o
+SRC = inverse.f90 example.f90
+OBJ = $(SRC:%.f90=%.o)
 
-inverse.o : inverse.f
-	$(FC) $(FFLAGS) -c inverse.f
+example.x: $(OBJ)
+	$(FC) $(FFLAGS) $^ -o $@ $(LAPACK)
+
+$(OBJ): %.o: %.f90
+	$(FC) $(FFLAGS) -c $< -o $@
+
+clean:
+	rm *.o *.x *.mod
